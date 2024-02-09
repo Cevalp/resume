@@ -1,8 +1,8 @@
-import FrontEnd.MainFrame;
+import FrontEnd.MyFrame;
 
 public class Main {
     public static void main(String[] args) {
-        MainFrame frame = new MainFrame();
+        MyFrame frame = new MyFrame();
 
     }
 }
