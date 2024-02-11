@@ -16,9 +16,16 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JRadioButton weakPassword;
     private JRadioButton intermediatePassword;
     private JRadioButton strongPassword;
+    private JRadioButton ownPasswordRadioButton;
+    private JRadioButton generatePasswordRadioButton;
     private JLabel explainText;
     private final ButtonGroup choiceGroup;
     private JButton createPasswordButton;
+    private JButton saveButton;
+    private JLabel passwordText;
+    private JTextField appTextField;
+    private JTextField nameTextField;
+    private JTextField passwordField;
 
     private final Generatable weakGenerator = new WeakGenerator();
     private final Generatable intermGenerator = new IntermediateGenerator();
@@ -45,12 +52,30 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
         createPasswordPanel.add(ownPasswordPanel);
         createPasswordPanel.add(generatePasswordPanel);
 
+        // In this block is code for panel in which password is displayed and user can save it with button
+        JPanel showPanel = showPassword();
 
 
         mainPart.add(appTextPanel);
         mainPart.add(createPasswordPanel);
+        mainPart.add(showPanel);
 
         this.add(mainPart, BorderLayout.CENTER);
+    }
+
+    @Override
+    void clearPage() {
+        // set page to default look
+        passwordText.setText("");
+        explainText.setText("Only low letters and length is 5 characters.");
+        weakPassword.setSelected(true);
+        intermediatePassword.setSelected(false);
+        strongPassword.setSelected(false);
+        ownPasswordRadioButton.setSelected(true);
+        generatePasswordRadioButton.setSelected(false);
+        appTextField.setText("");
+        nameTextField.setText("");
+        passwordField.setText("");
     }
 
     private JPanel getInfoFromUser(){
@@ -60,7 +85,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
         JLabel appText = new JLabel();
         appText.setText("Name of application (optional)");
 
-        JTextField appTextField = new JTextField();
+        appTextField = new JTextField();
         appTextField.setColumns(25);
         appInfo.add(appText);
         appInfo.add(appTextField);
@@ -69,7 +94,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
         JLabel nameText = new JLabel();
         nameText.setText("Your user name (email)");
 
-        JTextField nameTextField = new JTextField();
+        nameTextField = new JTextField();
         nameTextField.setColumns(25);
         userNameInfo.add(nameText);
         userNameInfo.add(nameTextField);
@@ -82,13 +107,14 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JPanel createOwnPassword(){
         // here is tool for user to set own password if he/she likes
         JPanel ownPasswordPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        JRadioButton ownPasswordRadioButton = new JRadioButton("Create own password");
+        ownPasswordRadioButton = new JRadioButton("Create own password");
+        ownPasswordRadioButton.addActionListener(this);
         choiceGroup.add(ownPasswordRadioButton);
         // Panel for reading password from user
         JPanel userPassword = new JPanel(new FlowLayout(FlowLayout.LEADING));
         JLabel ownPasswordText = new JLabel();
         ownPasswordText.setText("Write your own password");
-        JTextField passwordField = new JTextField();
+        passwordField = new JTextField();
         passwordField.setColumns(30);
         userPassword.add(ownPasswordText);
         userPassword.add(passwordField);
@@ -101,7 +127,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JPanel generatePassword(){
         // In this block is code for generating password
         JPanel generatePasswordPanel = new JPanel(new GridLayout(3, 1));
-        JRadioButton generatePasswordRadioButton = new JRadioButton("Generate password");
+        generatePasswordRadioButton = new JRadioButton("Generate password");
         choiceGroup.add(generatePasswordRadioButton);
 
         // panel only for buttons
@@ -134,12 +160,24 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
         explainText.setHorizontalAlignment(JLabel.CENTER);
         explainText.setVerticalAlignment(JLabel.CENTER);
 
+
         // adding radioButtons and create button
         generatePasswordPanel.add(generatePasswordRadioButton);
         generatePasswordPanel.add(generatePasswordButtonsPanel);
         generatePasswordPanel.add(explainText);
 
         return generatePasswordPanel;
+    }
+    private JPanel showPassword(){
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        passwordText = new JLabel();
+        saveButton = new JButton("Save password");
+        saveButton.addActionListener(this);
+
+        panel.add(passwordText);
+        panel.add(saveButton);
+
+        return panel;
     }
 
     @Override
@@ -150,20 +188,36 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
             explainText.setText("Lowercase and Uppercase characters with numbers. Length is 10 elements.");
         } else if (e.getSource() == strongPassword) {
             explainText.setText("Lowercase, Uppercase characters with numbers and special symbols. Length is 15 elements.");
-        } else if (e.getSource() == createPasswordButton) {
+        } else if (e.getSource() == createPasswordButton && generatePasswordRadioButton.isSelected()) {
             if (weakPassword.isSelected()) {
                 String password = weakGenerator.passwordGenerate();
-                System.out.println(password);
+                passwordText.setText("Your generated password is: " + password);
             } else if (intermediatePassword.isSelected()) {
                 String password = intermGenerator.passwordGenerate();
-                System.out.println(password);
+                passwordText.setText("Your generated password is: " + password);
             } else if (strongPassword.isSelected()) {
                 String password = strongGenerator.passwordGenerate();
-                System.out.println(password);
+                passwordText.setText("Your generated password is: " + password);
             } else {
                 System.out.println("Somewhere is mistake.");
             }
 
+        } else if (e.getSource() == ownPasswordRadioButton) {
+            passwordText.setText("");
+        } else if (e.getSource() == saveButton) {
+            String appName = appTextField.getText();
+            String userName = nameTextField.getText();
+            String password;
+            if (ownPasswordRadioButton.isSelected()){
+                password = passwordField.getText();
+            } else{
+                password = passwordText.getText();
+            }
+            if(password.isEmpty()){
+                passwordText.setText("Password can not be empty");
+            } else{
+                System.out.println("SAVING.");
+            }
         }
     }
 }

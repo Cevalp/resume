@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class AbstractPanel extends JPanel {
+public abstract class AbstractPanel extends JPanel {
     private final JPanel cardPanel;
     private final String imagePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "Utils" +
                                     File.separator + "Images" + File.separator + "backArrow.png";
@@ -55,11 +55,14 @@ public class AbstractPanel extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clearPage();
                 ((CardLayout)cardPanel.getLayout()).show(cardPanel, "MainPanel");
             }
         });
 
         return button;
     }
+
+    abstract void clearPage();
 
 }
