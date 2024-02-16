@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GeneratePanel extends AbstractPanel implements ActionListener {
     // this is code for panel where user can generate password
@@ -26,6 +28,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JTextField appTextField;
     private JTextField nameTextField;
     private JTextField passwordField;
+    private final Font font;
 
     private final Generatable weakGenerator = new WeakGenerator();
     private final Generatable intermGenerator = new IntermediateGenerator();
@@ -33,6 +36,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
 
     GeneratePanel(String panelText, String buttonText, JPanel cardPanel) {
         super(panelText, buttonText, cardPanel);
+         font = new Font(Font.MONOSPACED, Font.BOLD, 17);
 
         // Center part of page when user can create password
         JPanel mainPart = new JPanel(new GridLayout(3, 1));
@@ -81,18 +85,26 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JPanel getInfoFromUser(){
         JPanel appTextPanel = new JPanel(new GridLayout(2, 1));
         // get app name from user
-        JPanel appInfo = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel appInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel appText = new JLabel();
-        appText.setText("Name of application (optional)");
+        String appTextString = "Name of application (optional)";
+        appText.setText("%s %5s".formatted(appTextString, ""));
+        //appText.setText(appTextString);
+        appText.setFont(font);
+
 
         appTextField = new JTextField();
         appTextField.setColumns(25);
         appInfo.add(appText);
         appInfo.add(appTextField);
         // get username from user
-        JPanel userNameInfo = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel userNameInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel nameText = new JLabel();
-        nameText.setText("Your user name (email)");
+        String nameTextString = "Your user name (email)";
+        nameText.setText("%s %7s".formatted(nameTextString, " "));
+        //nameText.setText(nameTextString);
+        nameText.setFont(font);
+
 
         nameTextField = new JTextField();
         nameTextField.setColumns(25);
@@ -106,16 +118,21 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     }
     private JPanel createOwnPassword(){
         // here is tool for user to set own password if he/she likes
-        JPanel ownPasswordPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel ownPasswordPanel = new JPanel(new GridLayout(2, 1));
+
         ownPasswordRadioButton = new JRadioButton("Create own password");
         ownPasswordRadioButton.addActionListener(this);
+        ownPasswordRadioButton.setSelected(true);
         choiceGroup.add(ownPasswordRadioButton);
+
         // Panel for reading password from user
-        JPanel userPassword = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel userPassword = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel ownPasswordText = new JLabel();
-        ownPasswordText.setText("Write your own password");
+        String text = "Write your own password";
+        ownPasswordText.setText(text);
+        ownPasswordText.setFont(font);
         passwordField = new JTextField();
-        passwordField.setColumns(30);
+        passwordField.setColumns(25);
         userPassword.add(ownPasswordText);
         userPassword.add(passwordField);
 
@@ -171,6 +188,7 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
     private JPanel showPassword(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         passwordText = new JLabel();
+        passwordText.setFont(new Font(Font.DIALOG, Font.ITALIC, 15));
         saveButton = new JButton("Save password");
         saveButton.addActionListener(this);
 
@@ -178,6 +196,16 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
         panel.add(saveButton);
 
         return panel;
+    }
+    private void save(String appName, String userName, String password){
+        try{
+            String filePath = getFilePath();
+            FileWriter myFile = new FileWriter(filePath, true);
+            myFile.write(appName + "," + userName + "," + password + System.lineSeparator());
+            myFile.close();
+        } catch (IOException e){
+            System.out.println("Error occurred when saving password to file.");
+        }
     }
 
     @Override
@@ -216,7 +244,9 @@ public class GeneratePanel extends AbstractPanel implements ActionListener {
             if(password.isEmpty()){
                 passwordText.setText("Password can not be empty");
             } else{
-                System.out.println("SAVING.");
+                passwordText.setText("");
+                passwordField.setText("");
+                save(appName, userName, password.replace("Your generated password is: ", ""));
             }
         }
     }

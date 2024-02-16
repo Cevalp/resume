@@ -10,6 +10,9 @@ public abstract class AbstractPanel extends JPanel {
     private final String imagePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "Utils" +
                                     File.separator + "Images" + File.separator + "backArrow.png";
 
+    private final String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "Utils" +
+            File.separator + "Files" + File.separator + "passwords.txt";
+
     protected static Color bckColor = new Color(255, 255, 255);
     AbstractPanel(String panelText, String buttonText, JPanel cardPanel){
         this.cardPanel = cardPanel;
@@ -28,13 +31,13 @@ public abstract class AbstractPanel extends JPanel {
         JPanel leftPart = new JPanel(new FlowLayout(FlowLayout.LEADING));
         leftPart.setBackground(AbstractPanel.bckColor);
         leftPart.add(createButton(buttonText));
-        leftPart.setPreferredSize(new Dimension(200, 800));
+        leftPart.setPreferredSize(new Dimension(150, 800));
         this.add(leftPart, BorderLayout.WEST);
 
         // Right part of the page
         JPanel rightPart = new JPanel();
         rightPart.setBackground(AbstractPanel.bckColor);
-        rightPart.setPreferredSize(new Dimension(200, 800));
+        rightPart.setPreferredSize(new Dimension(150, 800));
         this.add(rightPart, BorderLayout.EAST);
 
         // Bottom part of the page
@@ -63,6 +66,11 @@ public abstract class AbstractPanel extends JPanel {
         return button;
     }
 
+    protected String getFilePath(){
+        return filePath;
+    }
+
     abstract void clearPage();
+    //abstract void makePass
 
 }

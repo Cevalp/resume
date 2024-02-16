@@ -19,7 +19,7 @@ public class StrongGenerator implements Generatable{
                 c = (char)(Generatable.rand.nextInt(10) + '0');
             } else {
                 // if is 3, generate special symbol
-                c = (char)(Generatable.rand.nextInt((49 - 33 + 1)) + 33);
+                c = (char)(Generatable.rand.nextInt((38 - 33 + 1)) + 33);
             }
             password.append(c);
         }

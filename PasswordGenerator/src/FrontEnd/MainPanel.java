@@ -63,6 +63,7 @@ public class MainPanel extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 ((CardLayout)cardPanel.getLayout()).show(cardPanel, panel);
             }
         });
